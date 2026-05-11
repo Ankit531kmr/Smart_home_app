@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Home Dashboard - Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="auth-page login-mode">
+  <main class="auth-shell" aria-label="Smart Home authentication">
+    <section class="auth-hero" aria-label="Smart Home features"></section>
+
+    <section class="auth-panel">
+      <div class="auth-panel-inner">
+        <div class="auth-brand">
+          <img class="auth-logo-image" src="assets/auth-logo.png" alt="Smart Home">
+        </div>
+
+        <div class="auth-copy">
+          <h1 id="authTitle">Welcome back!</h1>
+          <p id="authSubtitle">Login to your account</p>
+        </div>
+
+        <div id="authMessage" class="message hidden" aria-live="polite"></div>
+
+        <form id="authForm" class="auth-form">
+          <div class="field signup-only hidden">
+            <label for="fullName">User name</label>
+            <div class="input-shell">
+              <i class="fa-regular fa-user"></i>
+              <input id="fullName" name="userName" type="text" placeholder="Enter your user name" autocomplete="name">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <div class="input-shell">
+              <i class="fa-regular fa-envelope"></i>
+              <input id="email" name="email" type="email" placeholder="Enter your email" autocomplete="email" required>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <div class="input-shell">
+              <i class="fa-solid fa-lock"></i>
+              <input id="password" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required>
+              <button class="password-toggle" id="passwordToggle" type="button" aria-label="Show password">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-meta login-only">
+            <a href="#" class="forgot-link">Forgot password?</a>
+          </div>
+
+          <button id="authSubmit" class="primary-button" type="submit">
+            <span class="button-text">Login</span>
+            <span class="spinner hidden" aria-hidden="true"></span>
+          </button>
+
+          <div class="auth-divider" aria-hidden="true"><span>or</span></div>
+
+          <p class="auth-switch login-only">
+            Don&rsquo;t have an account?
+            <button class="auth-mode-trigger" type="button" data-auth-mode="signup">Sign up</button>
+          </p>
+          <p class="auth-switch signup-only hidden">
+            Already have an account?
+            <button class="auth-mode-trigger" type="button" data-auth-mode="login">Login</button>
+          </p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

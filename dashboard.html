@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Home Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="dashboard-page">
+  <div id="pageLoader" class="page-loader">
+    <div class="loader-card glass-card">
+      <span class="spinner large" aria-hidden="true"></span>
+      <p>Loading your dashboard...</p>
+    </div>
+  </div>
+
+  <div id="toastHost" class="toast-host" aria-live="polite" aria-atomic="true"></div>
+
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+  <div class="dashboard-shell">
+    <aside id="sidebar" class="sidebar glass-card">
+      <div class="sidebar-head">
+        <div class="brand">
+          <div class="brand-mark"><i class="fa-solid fa-house-signal"></i></div>
+          <div>
+            <strong>Smart Home</strong>
+            <span>Dashboard</span>
+          </div>
+        </div>
+        <button id="closeSidebar" class="icon-button mobile-only" type="button" aria-label="Close sidebar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-link active" type="button" data-section="dashboard">
+          <i class="fa-solid fa-chart-line"></i><span>Dashboard</span>
+        </button>
+        <button class="nav-link" type="button" data-section="devices">
+          <i class="fa-solid fa-sliders"></i><span>Devices</span>
+        </button>
+        <button class="nav-link" type="button" data-section="rooms">
+          <i class="fa-solid fa-door-open"></i><span>Rooms</span>
+        </button>
+        <button class="nav-link" type="button" data-section="energy">
+          <i class="fa-solid fa-bolt"></i><span>Energy</span>
+        </button>
+        <button class="nav-link" type="button" data-section="settings">
+          <i class="fa-solid fa-gear"></i><span>Settings</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="sidebarAccountBtn" class="footer-link" type="button" aria-expanded="false" aria-controls="sidebarSubmenu">
+          <i class="fa-solid fa-user"></i>
+          <span>Account</span>
+          <i class="fa-solid fa-chevron-down submenu-arrow"></i>
+        </button>
+        <div id="sidebarSubmenu" class="sidebar-submenu">
+          <button class="footer-link" type="button" data-section-jump="profile">
+            <i class="fa-solid fa-id-card"></i>
+            <span>Profile</span>
+          </button>
+          <button id="sidebarLogoutBtn" class="footer-link danger" type="button">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="dashboard-content">
+      <header class="topbar glass-card">
+        <div class="topbar-left">
+          <div>
+            <h1 id="pageTitle">Dashboard</h1>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="icon-button" type="button" aria-label="Notifications">
+            <i class="fa-regular fa-bell"></i>
+          </button>
+
+          <div class="profile-menu-wrap">
+            <button id="profileMenuBtn" class="profile-button" type="button">
+              <img id="topbarAvatar" class="avatar small" alt="Profile avatar">
+            </button>
+            <div id="profileMenu" class="profile-menu glass-card">
+              <button type="button" data-section-jump="profile">Profile</button>
+              <button type="button" data-section-jump="settings">Settings</button>
+              <button type="button" id="menuLogoutBtn">Logout</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="sections">
+        <section id="section-dashboard" class="section active">
+          <div class="stats-grid">
+            <article class="stat-card glass-card">
+              <span>Devices</span>
+              <strong id="statDevices">0</strong>
+              <small id="statActive">0 active</small>
+            </article>
+            <article class="stat-card glass-card">
+              <span>Rooms</span>
+              <strong id="statRooms">0</strong>
+              <small>Created for your home</small>
+            </article>
+            <article class="stat-card glass-card">
+              <span>Energy today</span>
+              <strong id="statEnergy">0.0 kWh</strong>
+              <small>Simulated usage</small>
+            </article>
+          </div>
+
+          <div class="content-grid">
+            <section class="panel glass-card">
+              <div class="panel-head">
+                <div>
+                  <p class="panel-label">Quick Add</p>
+                  <h2>Add Device</h2>
+                </div>
+              </div>
+              <form id="addDeviceForm" class="stack-form">
+                <div class="field">
+                  <label for="deviceName">Device name</label>
+                  <input id="deviceName" type="text" placeholder="Living Room Light" required>
+                </div>
+                <div class="field">
+                  <label for="deviceRoom">Room</label>
+                  <input id="deviceRoom" type="text" list="roomHints" placeholder="Living Room" required>
+                  <datalist id="roomHints"></datalist>
+                </div>
+                <div class="inline-field">
+                  <label class="switch-label">
+                    <span>Status default OFF</span>
+                    <input id="deviceStatus" type="checkbox">
+                    <span class="switch"></span>
+                  </label>
+                </div>
+                <button class="primary-button" type="submit">
+                  <span class="button-text">Save Device</span>
+                  <span class="spinner hidden" aria-hidden="true"></span>
+                </button>
+              </form>
+            </section>
+
+            <section class="panel glass-card">
+              <div class="panel-head">
+                <div>
+                  <p class="panel-label">Live Devices</p>
+                  <h2>Device Grid</h2>
+                </div>
+                <div class="chip" id="deviceSummaryChip">0 devices</div>
+              </div>
+              <div id="dashboardDevices" class="device-grid"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="section-devices" class="section">
+          <section class="devices-hero">
+            <div class="devices-copy">
+              <h2>Devices</h2>
+              <p>Manage and monitor all your smart devices.</p>
+            </div>
+          </section>
+
+          <section class="device-summary-card glass-card">
+            <div class="device-summary-icon">
+              <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <div class="device-summary-copy">
+              <span>Total Devices</span>
+              <strong id="deviceSectionTotal">0</strong>
+              <small id="deviceSectionRooms">Across 0 rooms</small>
+            </div>
+          </section>
+
+          <section class="section-toolbar device-toolbar glass-card">
+            <div class="field wide">
+              <label for="deviceSearch">Search devices</label>
+              <div class="device-input-shell">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="deviceSearch" type="search" placeholder="Search devices by name...">
+              </div>
+            </div>
+            <div class="field wide">
+              <label for="roomFilter">Filter by room</label>
+              <select id="roomFilter"></select>
+            </div>
+            <button id="deviceResetBtn" class="ghost-button reset-button" type="button">
+              <i class="fa-solid fa-rotate-left"></i>
+              <span>Reset</span>
+            </button>
+          </section>
+
+          <section class="device-table-card glass-card">
+            <div class="device-table-head">
+              <div>Device</div>
+              <div>Room</div>
+              <div>Status</div>
+              <div>Type</div>
+              <div>Last Activity</div>
+              <div></div>
+            </div>
+            <div id="deviceSectionGrid" class="device-table-body"></div>
+            <div class="device-table-foot">
+              <p id="deviceSectionMeta">Showing 0 devices</p>
+              <div class="device-page-badge">Live view</div>
+            </div>
+          </section>
+        </section>
+
+        <section id="section-rooms" class="section">
+          <div class="content-grid single-column">
+            <section class="panel glass-card">
+              <div class="panel-head">
+                <div>
+                  <p class="panel-label">Rooms</p>
+                  <h2>Room Overview</h2>
+                </div>
+              </div>
+              <div id="roomsGrid" class="rooms-grid"></div>
+            </section>
+
+            <section class="panel glass-card">
+              <div class="panel-head">
+                <div>
+                  <p class="panel-label">Add Room</p>
+                  <h2>Create a new room</h2>
+                </div>
+              </div>
+              <form id="addRoomForm" class="stack-form inline-end">
+                <div class="field">
+                  <label for="roomName">Room name</label>
+                  <input id="roomName" type="text" placeholder="Bedroom" required>
+                </div>
+                <button class="primary-button" type="submit">
+                  <span class="button-text">Save Room</span>
+                  <span class="spinner hidden" aria-hidden="true"></span>
+                </button>
+              </form>
+            </section>
+          </div>
+        </section>
+
+        <section id="section-energy" class="section">
+          <div class="content-grid single-column">
+            <div class="stats-grid">
+              <article class="stat-card glass-card">
+                <span>Total usage today</span>
+                <strong id="energyToday">0.0 kWh</strong>
+                <small>Estimated from active devices</small>
+              </article>
+              <article class="stat-card glass-card">
+                <span>Peak hour</span>
+                <strong id="energyPeak">7 PM</strong>
+                <small>Simulated pattern</small>
+              </article>
+              <article class="stat-card glass-card">
+                <span>Efficiency</span>
+                <strong id="energyEfficiency">92%</strong>
+                <small>Compared to baseline</small>
+              </article>
+            </div>
+
+            <section class="panel glass-card">
+              <div class="panel-head">
+                <div>
+                  <p class="panel-label">Energy chart</p>
+                  <h2>Weekly usage</h2>
+                </div>
+              </div>
+              <div class="chart-wrap">
+                <canvas id="energyChart"></canvas>
+              </div>
+            </section>
+
+            <section class="panel glass-card">
+              <div class="panel-head">
+                <div>
+                  <p class="panel-label">Device usage</p>
+                  <h2>Simulated breakdown</h2>
+                </div>
+              </div>
+              <div id="energyBreakdown" class="breakdown-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="section-profile" class="section">
+          <section class="profile-hero">
+            <div>
+              <h2>Profile</h2>
+              <p>View the house owner details for this smart home.</p>
+            </div>
+          </section>
+
+          <section class="owner-profile-card glass-card">
+            <div class="owner-profile-avatar">
+              <img id="settingsOwnerAvatar" class="avatar large" alt="House owner avatar">
+            </div>
+            <div class="owner-profile-copy">
+              <span>House Owner</span>
+              <strong id="settingsOwnerName">User</strong>
+              <p id="settingsOwnerEmail">user@example.com</p>
+            </div>
+          </section>
+
+          <div class="profile-grid">
+            <section class="profile-info-card glass-card">
+              <div class="profile-info-head">
+                <div class="settings-card-icon appearance">
+                  <i class="fa-solid fa-user"></i>
+                </div>
+                <div>
+                  <h3>Owner Information</h3>
+                  <p>Main account details for this dashboard.</p>
+                </div>
+              </div>
+              <div class="settings-divider"></div>
+              <div class="profile-detail-list">
+                <div class="profile-detail-row">
+                  <span>Full Name</span>
+                  <strong id="profileOwnerName">User</strong>
+                </div>
+                <div class="profile-detail-row">
+                  <span>Email Address</span>
+                  <strong id="profileOwnerEmail">user@example.com</strong>
+                </div>
+              </div>
+            </section>
+
+            <section class="profile-info-card glass-card">
+              <div class="profile-info-head">
+                <div class="settings-card-icon connection">
+                  <i class="fa-solid fa-house"></i>
+                </div>
+                <div>
+                  <h3>Home Summary</h3>
+                  <p>Quick snapshot of the connected home.</p>
+                </div>
+              </div>
+              <div class="settings-divider"></div>
+              <div class="profile-detail-list">
+                <div class="profile-detail-row">
+                  <span>Total Rooms</span>
+                  <strong id="profileRoomCount">0</strong>
+                </div>
+                <div class="profile-detail-row">
+                  <span>Total Devices</span>
+                  <strong id="profileDeviceCount">0</strong>
+                </div>
+                <div class="profile-detail-row">
+                  <span>Active Devices</span>
+                  <strong id="profileActiveDeviceCount">0</strong>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section id="section-settings" class="section">
+          <section class="settings-hero">
+            <div>
+              <h2>Settings</h2>
+              <p>Manage your smart home preferences.</p>
+            </div>
+          </section>
+
+          <div class="settings-grid">
+            <section class="settings-card glass-card">
+              <div class="settings-card-head">
+                <div class="settings-card-icon preferences">
+                  <i class="fa-regular fa-bell"></i>
+                </div>
+                <div>
+                  <h3>Preferences</h3>
+                  <p>Manage your notification preferences.</p>
+                </div>
+              </div>
+
+              <div class="settings-divider"></div>
+
+              <label class="settings-inline-row" for="notificationsToggle">
+                <div>
+                  <strong>Enable Notifications</strong>
+                  <p>Receive alerts about your devices and home activity.</p>
+                </div>
+                <span class="settings-switch">
+                  <input id="notificationsToggle" type="checkbox">
+                  <span class="settings-slider"></span>
+                </span>
+              </label>
+            </section>
+
+            <section class="settings-card glass-card">
+              <div class="settings-card-head">
+                <div class="settings-card-icon connection">
+                  <i class="fa-solid fa-link"></i>
+                </div>
+                <div>
+                  <h3>Connection</h3>
+                  <p>Choose how your devices connect.</p>
+                </div>
+              </div>
+
+              <div class="settings-divider"></div>
+
+              <label class="settings-option-row">
+                <div class="settings-option-main">
+                  <div class="settings-option-icon">
+                    <i class="fa-solid fa-wifi"></i>
+                  </div>
+                  <div>
+                    <strong>Wi-Fi</strong>
+                    <p>Connect devices using your home Wi-Fi network.</p>
+                  </div>
+                </div>
+                <input class="settings-radio" type="radio" name="connectionMode" value="wifi">
+              </label>
+
+              <label class="settings-option-row">
+                <div class="settings-option-main">
+                  <div class="settings-option-icon">
+                    <i class="fa-brands fa-bluetooth-b"></i>
+                  </div>
+                  <div>
+                    <strong>Bluetooth</strong>
+                    <p>Connect nearby devices using Bluetooth.</p>
+                  </div>
+                </div>
+                <input class="settings-radio" type="radio" name="connectionMode" value="bluetooth">
+              </label>
+            </section>
+
+            <section class="settings-card glass-card">
+              <div class="settings-card-head">
+                <div class="settings-card-icon appearance">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <div>
+                  <h3>Appearance</h3>
+                  <p>Choose your app theme.</p>
+                </div>
+              </div>
+
+              <div class="settings-divider"></div>
+
+              <div class="theme-choice-grid">
+                <button id="themeLightBtn" class="theme-choice-card" type="button" data-theme-choice="light">
+                  <span class="theme-choice-check"><i class="fa-solid fa-circle"></i></span>
+                  <i class="fa-regular fa-sun theme-choice-glyph"></i>
+                  <strong>Light</strong>
+                </button>
+
+                <button id="themeDarkBtn" class="theme-choice-card" type="button" data-theme-choice="dark">
+                  <span class="theme-choice-check"><i class="fa-regular fa-circle"></i></span>
+                  <i class="fa-solid fa-moon theme-choice-glyph"></i>
+                  <strong>Dark</strong>
+                </button>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
